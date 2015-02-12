@@ -3,18 +3,19 @@ import pygame
 from tax_constants import *
 import random
 
-def initializeHoles():
+def initializeHoles(difficulty=3):
 	holes = set()
-	for i in range(5):
-		holes.add(randomHole())
+	for i in range(difficulty):
+		holes.add(randomHole(difficulty))
 	return holes
 
-def randomHole():
+def randomHole(difficulty):
 	x = random.randint(0, WINDOWWIDTH)
 	y = random.randint(0, WINDOWHEIGHT)
-	r = random.randint(5,15)
+	r = random.randint( TAXES_MIN_RADIUS_BASE+TAXES_MIN_RADIUS_FACTOR*difficulty, 
+						TAXES_MAX_RADIUS_BASE+TAXES_MAX_RADIUS_FACTOR*difficulty)
 	a = random.uniform(0, 2*math.pi)
-	s = random.randint(5,15)
+	s = random.randint(TAXES_MIN_SPEED_BASE+difficulty, TAXES_MAX_SPEED_BASE+difficulty)
 	return Hole(x, y, r, a, s)
 	
 class Hole:
@@ -30,7 +31,9 @@ class Hole:
 		self.xpos += int(math.cos(self.angle)*self.speed)
 		self.ypos += int(math.sin(self.angle)*self.speed)
 		self.checkOffScreen()
-		
+		self.randomizeTrajectory()
+
+
 	def checkOffScreen(self):
 		if self.xpos < 0:
 			self.xpos = WINDOWWIDTH
@@ -42,14 +45,16 @@ class Hole:
 			self.ypos = 0
 			
 		
-	def randomizeTrajectory():
-		pass 
+	def randomizeTrajectory(self):
+		if random.uniform(0,1) < TAXES_BOUNCE_PROBABILITY:
+			self.angle = random.uniform(0, 2*math.pi)
 		
 	def draw(self, displaysurf):
 		pygame.draw.circle(displaysurf, BLACK, (self.xpos, self.ypos), self.radius, 0)
 		
 	def checkMouseover(self, x, y):
-		pass
+		return (self.xpos - self.radius <= x <= self.xpos + self.radius) and \
+		(self.ypos - self.radius <= y <= self.ypos + self.radius)
+		
+		
 	
-
-

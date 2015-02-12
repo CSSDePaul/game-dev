@@ -28,6 +28,7 @@ def runGame():
 		for hole in holes:	
 			if hole.checkMouseover(mousex, mousey):
 				score += 1
+				print score
 				break
 		
 		#-------DRAW STUFF--------
