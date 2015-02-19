@@ -3,9 +3,9 @@ import pygame
 from tax_constants import *
 import random
 
-def initializeHoles(difficulty=3):
+def initializeHoles(difficulty=5):
 	holes = set()
-	for i in range(difficulty):
+	for i in range(TAXES_EASIEST_NUM_HOLES - difficulty):
 		holes.add(randomHole(difficulty))
 	return holes
 
@@ -15,17 +15,19 @@ def randomHole(difficulty):
 	r = random.randint( TAXES_MIN_RADIUS_BASE+TAXES_MIN_RADIUS_FACTOR*difficulty, 
 						TAXES_MAX_RADIUS_BASE+TAXES_MAX_RADIUS_FACTOR*difficulty)
 	a = random.uniform(0, 2*math.pi)
-	s = random.randint(TAXES_MIN_SPEED_BASE+difficulty, TAXES_MAX_SPEED_BASE+difficulty)
-	return Hole(x, y, r, a, s)
+	s = random.randint(TAXES_MIN_SPEED_BASE+TAXES_MIN_SPEED_FACTOR*difficulty, TAXES_MAX_SPEED_BASE+TAXES_MAX_SPEED_FACTOR*difficulty)
+	b = TAXES_BOUNCE_PROBABILITY + TAXES_BOUNCE_PROBABILITY_FACTOR*difficulty
+	return Hole(x, y, r, a, s, b)
 	
 class Hole:
 	
-	def __init__(self, xpos, ypos, radius, angle, speed):
+	def __init__(self, xpos, ypos, radius, angle, speed, bounce):
 		self.xpos = xpos
 		self.ypos = ypos
 		self.radius = radius
 		self.angle = angle
 		self.speed = speed
+		self.bounce = bounce
 	
 	def update(self):
 		self.xpos += int(math.cos(self.angle)*self.speed)
@@ -46,7 +48,7 @@ class Hole:
 			
 		
 	def randomizeTrajectory(self):
-		if random.uniform(0,1) < TAXES_BOUNCE_PROBABILITY:
+		if random.uniform(0,1) < self.bounce:
 			self.angle = random.uniform(0, 2*math.pi)
 		
 	def draw(self, displaysurf):

@@ -17,10 +17,11 @@ def runGame():
 	mousey = 0 # used to store y coordinate of mouse event
 	stillPlaying = True
 	score = 0
-	holes = taxhole.initializeHoles()
-	
-	while stillPlaying: # main game loop
+	holes = taxhole.initializeHoles(difficulty=3)
+	loopcount = 0
+	while loopcount < FPS*TAXES_NUM_SECONDS: # main game loop
 		#-------UPDATE VARIABLES-------
+		loopcount+=1
 		for hole in holes:
 			hole.update()
 			
@@ -30,7 +31,7 @@ def runGame():
 				score += 1
 				print score
 				break
-		
+
 		#-------DRAW STUFF--------
 		DISPLAYSURF.fill(BGCOLOR)
 		for hole in holes:
@@ -47,6 +48,7 @@ def runGame():
 		#--------FINAL------------
 		pygame.display.update() #redraw the screen
 		FPSCLOCK.tick(FPS) #wait for clock tick
+	print "Final score: %d"%(score)
 
 def main():
 	runGame()
